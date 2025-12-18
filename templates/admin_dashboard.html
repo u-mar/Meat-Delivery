@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Premium Meat Delivery{% endblock %}
+
+{% block content %}
+<section class="page-header admin-header">
+    <div class="container">
+        <h1><i class="fas fa-chart-line"></i> Admin Dashboard</h1>
+        <p>Manage orders and monitor business</p>
+    </div>
+</section>
+
+<section class="admin-section">
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Statistics Cards -->
+        <div class="admin-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ stats.total_orders }}</h3>
+                    <p>Total Orders</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon pending">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ stats.pending_orders }}</h3>
+                    <p>Pending</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon confirmed">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ stats.confirmed_orders }}</h3>
+                    <p>Confirmed</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon delivered">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ stats.delivered_orders }}</h3>
+                    <p>Delivered</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Orders Table -->
+        <div class="admin-orders">
+            <h2>All Orders</h2>
+            
+            {% if orders %}
+            <div class="orders-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Payment</th>
+                            <th>Pay Status</th>
+                            <th>Code Status</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td><strong>#{{ order.id }}</strong></td>
+                            <td>{{ order.user }}</td>
+                            <td>{{ order.date }}</td>
+                            <td>{{ order.order_items|length }} items</td>
+                            <td>KSH {{ order.total|format_currency }}</td>
+                            <td><span class="badge badge-{{ order.payment_method }}">{{ order.payment_method|upper }}</span></td>
+                            <td>
+                                {% if order.payment_status == 'completed' %}
+                                <span class="badge badge-verified"><i class="fas fa-check"></i> Paid</span>
+                                {% elif order.payment_status == 'initiated' %}
+                                <button class="btn-verify" onclick="showPaymentConfirmModal({{ order.id }})"><i class="fas fa-check-circle"></i> Confirm Payment</button>
+                                {% else %}
+                                <button class="btn-verify" onclick="showPaymentConfirmModal({{ order.id }})"><i class="fas fa-check-circle"></i> Confirm Payment</button>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if order.code_verified %}
+                                <span class="badge badge-verified"><i class="fas fa-check"></i> Verified</span>
+                                {% else %}
+                                <button class="btn-verify" onclick="showVerifyModal({{ order.id }}, '{{ order.secret_code }}')"><i class="fas fa-key"></i> Verify</button>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ order.status }}">
+                                    {{ order.status|capitalize }}
+                                </span>
+                            </td>
+                            <td>
+                                <form method="POST" action="{{ url_for('update_order_status') }}" class="status-form">
+                                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                                    <select name="status" onchange="this.form.submit()">
+                                        <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                                        <option value="confirmed" {% if order.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                        <option value="preparing" {% if order.status == 'preparing' %}selected{% endif %}>Preparing</option>
+                                        <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                                        <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                                        <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-orders">
+                <p>No orders yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Verification Modal -->
+<div id="verifyModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeVerifyModal()">&times;</span>
+        <h2><i class="fas fa-key"></i> Verify Order</h2>
+        <p>Enter the secret code provided by the customer</p>
+        
+        <form method="POST" action="{{ url_for('verify_code') }}" id="verifyForm">
+            <input type="hidden" id="verifyOrderId" name="order_id">
+            <div class="form-group">
+                <label for="secret_code">Secret Code (6 digits)</label>
+                <input type="text" id="secret_code" name="secret_code" required maxlength="6" pattern="[0-9]{6}" placeholder="Enter 6-digit code">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Verify Order</button>
+        </form>
+    </div>
+</div>
+
+<!-- Payment Confirmation Modal -->
+<div id="paymentConfirmModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closePaymentConfirmModal()">&times;</span>
+        <h2><i class="fas fa-check-circle"></i> Confirm Payment Received</h2>
+        <p>Confirm that you have received payment for this order</p>
+        
+        <form method="POST" action="{{ url_for('confirm_payment') }}" id="paymentConfirmForm">
+            <input type="hidden" id="paymentOrderId" name="order_id">
+            <div class="form-group">
+                <label>Are you sure you want to mark this payment as received?</label>
+                <p style="color: #666; font-size: 0.9em;">This action confirms that the customer has paid for their order.</p>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Yes, Confirm Payment</button>
+            <button type="button" class="btn btn-secondary btn-block" onclick="closePaymentConfirmModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function showVerifyModal(orderId, actualCode) {
+    document.getElementById('verifyOrderId').value = orderId;
+    document.getElementById('verifyModal').style.display = 'block';
+}
+
+function closeVerifyModal() {
+    document.getElementById('verifyModal').style.display = 'none';
+    document.getElementById('verifyForm').reset();
+}
+
+function showPaymentConfirmModal(orderId) {
+    document.getElementById('paymentOrderId').value = orderId;
+    document.getElementById('paymentConfirmModal').style.display = 'block';
+}
+
+function closePaymentConfirmModal() {
+    document.getElementById('paymentConfirmModal').style.display = 'none';
+    document.getElementById('paymentConfirmForm').reset();
+}
+
+window.onclick = function(event) {
+    const verifyModal = document.getElementById('verifyModal');
+    const paymentModal = document.getElementById('paymentConfirmModal');
+    if (event.target == verifyModal) {
+        closeVerifyModal();
+    }
+    if (event.target == paymentModal) {
+        closePaymentConfirmModal();
+    }
+}
+</script>
+{% endblock %}

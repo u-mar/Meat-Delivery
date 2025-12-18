@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Premium Meat Delivery{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Checkout</h1>
+        <p>Complete your order</p>
+    </div>
+</section>
+
+<section class="checkout-section">
+    <div class="container">
+        <div class="checkout-content">
+            <!-- Order Summary -->
+            <div class="checkout-summary">
+                <h2><i class="fas fa-shopping-bag"></i> Order Summary</h2>
+                
+                <div class="summary-items">
+                    {% for item in cart_items %}
+                    <div class="summary-item">
+                        <div class="summary-item-info">
+                            <h4>{{ item.name }}</h4>
+                            <p>Quantity: {{ item.quantity }}</p>
+                        </div>
+                        <div class="summary-item-price">
+                            KSH {{ (item.price * item.quantity)|format_currency }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="summary-totals">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>KSH {{ total|format_currency }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery Fee:</span>
+                        <span>KSH 1</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span>KSH {{ (total + 1)|format_currency }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Delivery Information Form -->
+            <div class="checkout-form-section">
+                <h2><i class="fas fa-truck"></i> Delivery Information</h2>
+                
+                <form method="POST" action="{{ url_for('checkout') }}" class="checkout-form">
+                    <div class="form-section">
+                        <h3>Contact Details</h3>
+                        
+                        <div class="form-group">
+                            <label for="phone"><i class="fas fa-phone"></i> Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="0712345678">
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Delivery Address</h3>
+                        
+                        <div class="form-group">
+                            <label for="address"><i class="fas fa-map-marker-alt"></i> Street Address *</label>
+                            <input type="text" id="address" name="address" required placeholder="Mombasa Road, Apartment 4B">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city"><i class="fas fa-city"></i> City/Town *</label>
+                                <input type="text" id="city" name="city" required placeholder="Kajiado">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="postal_code"><i class="fas fa-mail-bulk"></i> Postal Code *</label>
+                                <input type="text" id="postal_code" name="postal_code" required placeholder="00100">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Payment Method</h3>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-money-bill-wave"></i> Select Payment Method *</label>
+                            <div class="payment-options">
+                                <label class="payment-option">
+                                    <input type="radio" name="payment_method" value="cash" checked>
+                                    <div class="payment-card">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span>Cash on Delivery</span>
+                                    </div>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="payment_method" value="mpesa">
+                                    <div class="payment-card">
+                                        <i class="fas fa-mobile-alt"></i>
+                                        <span>M-Pesa</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mpesa-phone-group" style="display: none;">
+                            <label for="mpesa_phone"><i class="fas fa-mobile-alt"></i> M-Pesa Phone Number</label>
+                            <input type="tel" id="mpesa_phone" name="mpesa_phone" placeholder="254712345678" pattern="254[0-9]{9}">
+                            <small>Format: 254XXXXXXXXX (e.g., 254712345678)</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Additional Notes (Optional)</h3>
+                        
+                        <div class="form-group">
+                            <label for="notes"><i class="fas fa-sticky-note"></i> Delivery Instructions</label>
+                            <textarea id="notes" name="notes" rows="3" placeholder="e.g., Leave at front door, Ring doorbell twice, etc."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="checkout-actions">
+                        <a href="{{ url_for('cart') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Cart
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <i class="fas fa-check-circle"></i> Place Order - KSH {{ (total + 1)|format_currency }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Show/hide M-Pesa phone field based on payment method
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentOptions = document.querySelectorAll('input[name="payment_method"]');
+    const mpesaPhoneGroup = document.querySelector('.mpesa-phone-group');
+    const mpesaPhoneInput = document.getElementById('mpesa_phone');
+    
+    paymentOptions.forEach(option => {
+        option.addEventListener('change', function() {
+            if (this.value === 'mpesa') {
+                mpesaPhoneGroup.style.display = 'block';
+                mpesaPhoneInput.required = true;
+            } else {
+                mpesaPhoneGroup.style.display = 'none';
+                mpesaPhoneInput.required = false;
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

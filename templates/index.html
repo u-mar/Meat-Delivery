@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-overlay">
+        <div class="container hero-content">
+            <h1 class="hero-title">Premium Quality Meats<br>Delivered Fresh to Your Door</h1>
+            <p class="hero-subtitle">Experience the finest cuts from local farms. 100% organic, ethically sourced, and delivered with care.</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('products') }}" class="btn btn-primary">Shop Now</a>
+                <a href="{{ url_for('about') }}" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">Why Choose Prime Cuts?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h3>100% Organic</h3>
+                <p>All our meats are sourced from certified organic farms with the highest standards.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3>Fast Delivery</h3>
+                <p>Same-day delivery available. Your order arrives fresh and properly packaged.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h3>Premium Quality</h3>
+                <p>Hand-selected cuts inspected by our expert butchers for quality assurance.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Safe & Hygienic</h3>
+                <p>FDA certified facilities with strict hygiene protocols and cold chain management.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Products Section -->
+<section class="popular-products">
+    <div class="container">
+        <h2 class="section-title">Our Popular Products</h2>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1588347818036-eac310d65f0e?w=800&q=80" alt="Premium Beef Steak">
+                    <span class="product-badge">Bestseller</span>
+                </div>
+                <div class="product-info">
+                    <h3>Premium Beef Steak</h3>
+                    <p>Grade A beef, perfectly marbled</p>
+                    <div class="product-price">KSH 1,200/kg</div>
+                    <button class="btn btn-add-cart" onclick="addToCart(1, 'Premium Beef Steak', 1200)">Add to Cart</button>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=800&q=80" alt="Fresh Chicken Breast">
+                </div>
+                <div class="product-info">
+                    <h3>Fresh Chicken Breast</h3>
+                    <p>Organic, free-range chicken breast</p>
+                    <div class="product-price">KSH 450/kg</div>
+                    <button class="btn btn-add-cart" onclick="addToCart(2, 'Fresh Chicken Breast', 450)">Add to Cart</button>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=800&q=80" alt="Goat Meat">
+                    <span class="product-badge">New</span>
+                </div>
+                <div class="product-info">
+                    <h3>Goat Meat (Mbuzi)</h3>
+                    <p>Fresh goat meat, locally sourced</p>
+                    <div class="product-price">KSH 850/kg</div>
+                    <button class="btn btn-add-cart" onclick="addToCart(4, 'Goat Meat (Mbuzi)', 850)">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <a href="{{ url_for('products') }}" class="btn btn-primary">View All Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials">
+    <div class="container">
+        <h2 class="section-title">What Our Customers Say</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>"The quality of meat is outstanding! Always fresh and delivered on time. Prime Cuts has become my go-to for all meat purchases."</p>
+                <div class="testimonial-author">
+                    <strong>Sarah Johnson</strong>
+                    <span>Home Chef</span>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>"Exceptional service and premium products. The beef steaks are perfectly marbled and taste amazing. Highly recommend!"</p>
+                <div class="testimonial-author">
+                    <strong>Michael Chen</strong>
+                    <span>BBQ Enthusiast</span>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>"Fast delivery, great packaging, and the meat quality is consistently excellent. Customer service is also top-notch!"</p>
+                <div class="testimonial-author">
+                    <strong>Emily Rodriguez</strong>
+                    <span>Restaurant Owner</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Ready to Experience Premium Quality?</h2>
+            <p>Join thousands of satisfied customers and get fresh, organic meats delivered to your doorstep.</p>
+            <a href="{{ url_for('products') }}" class="btn btn-primary btn-large">Start Shopping Now</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

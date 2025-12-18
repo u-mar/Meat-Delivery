@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Our Products - Premium Meat Delivery{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Our Premium Products</h1>
+        <p>Browse our selection of high-quality, ethically sourced meats</p>
+    </div>
+</section>
+
+<section class="products-page">
+    <div class="container">
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if 'Beef' in product.name or 'Cow' in product.name %}
+                    <img src="https://images.unsplash.com/photo-1588347818036-eac310d65f0e?w=800&q=80" alt="{{ product.name }}">
+                    {% elif 'Chicken Breast' in product.name %}
+                    <img src="https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=800&q=80" alt="{{ product.name }}">
+                    {% elif 'Chicken Legs' in product.name or 'Chicken Leg' in product.name %}
+                    <img src="https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=800&q=80" alt="{{ product.name }}">
+                    {% elif 'Whole Chicken' in product.name %}
+                    <img src="https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=800&q=80" alt="{{ product.name }}">
+                    {% elif 'Goat' in product.name or 'Mbuzi' in product.name %}
+                    <img src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=800&q=80" alt="{{ product.name }}">
+                    {% elif 'Lamb' in product.name %}
+                    <img src="https://images.unsplash.com/photo-1595777216528-071e0127ccbf?w=800&q=80" alt="{{ product.name }}">
+                    {% elif 'Fish' in product.name or 'Tilapia' in product.name %}
+                    <img src="https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?w=800&q=80" alt="{{ product.name }}">
+                    {% elif 'Camel' in product.name %}
+                    <img src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=800&q=80" alt="{{ product.name }}">
+                    {% elif 'Pork' in product.name %}
+                    <img src="https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=800&q=80" alt="{{ product.name }}">
+                    {% elif 'Turkey' in product.name %}
+                    <img src="https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=800&q=80" alt="{{ product.name }}">
+                    {% elif 'Sausage' in product.name %}
+                    <img src="https://images.unsplash.com/photo-1613556633898-5898eb883bc5?w=800&q=80" alt="{{ product.name }}">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=800&q=80" alt="{{ product.name }}">
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.description }}</p>
+                    <div class="product-price">KSH {{ product.price|format_currency }}/kg</div>
+                    <button class="btn btn-add-cart" onclick="addToCart({{ product.id }}, '{{ product.name }}', {{ product.price }})">Add to Cart</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
